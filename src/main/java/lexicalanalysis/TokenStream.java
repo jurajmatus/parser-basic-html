@@ -17,20 +17,26 @@ public class TokenStream implements Closeable, AutoCloseable {
 	
 	private final static List<Terminal> TERMINALS;
 	private final static int MAX_TOKEN_LENGTH;
+	
+	public final static Terminal WHITESPACE = Terminal.newCharacterSetTerminal(CharMatcher.whitespace());
+	public final static Terminal LETTER = Terminal.newCharacterSetTerminal(CharMatcher.javaLetter());
+	public final static Terminal DIGIT = Terminal.newCharacterSetTerminal(CharMatcher.digit());
+	public final static Terminal OTHERSYMBOL = Terminal.newCharacterSetTerminal(CharMatcher.anyOf(".,-!/_:'\"|;+-*"));
+	
 	static {
 		Builder<Terminal> builder = Stream.builder();
 		
-		builder.add(Terminal.newCharacterSetToken(CharMatcher.javaLetter()));
-		builder.add(Terminal.newCharacterSetToken(CharMatcher.digit()));
-		builder.add(Terminal.newCharacterSetToken(CharMatcher.anyOf(".,-!/_:'\"|;+-*")));
-		builder.add(Terminal.newCharacterSetToken(CharMatcher.whitespace()));
+		builder.add(LETTER);
+		builder.add(DIGIT);
+		builder.add(OTHERSYMBOL);
+		builder.add(WHITESPACE);
 		
 		String allLiteralTokens = "<html>;</html>;<head>;</head>;<title>;</title>;<meta;name=;content=;>;"
 								+ "<body>;</body>;<p>;</p>;<table>;</table>;<tr>;</tr>;<td>;</td>;<ul>;"
 								+ "</ul>;<ol>;</ol>;<li>;<dl>;</dl>;<dt>;<dd>";
 		
 		Stream<Terminal> tokens = Stream.concat(builder.build(),
-				Splitter.on(';').splitToList(allLiteralTokens).stream().map(Terminal::newLiteralToken));
+				Splitter.on(';').splitToList(allLiteralTokens).stream().map(Terminal::newLiteralTerminal));
 		
 		TERMINALS = tokens
 				.sorted((t1, t2) -> Integer.compare(t2.getLength(), t1.getLength()))
@@ -73,6 +79,12 @@ public class TokenStream implements Closeable, AutoCloseable {
 				reader.reset();
 				reader.skip(lastLength);
 				position += lastLength;
+				
+				// Whitespace is skipped
+				if (terminal == WHITESPACE) {
+					return read();
+				}
+				
 				return Token.of(subStr);
 			}
 		}
@@ -81,6 +93,14 @@ public class TokenStream implements Closeable, AutoCloseable {
 		
 	}
 	
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
+	}
+
 	@Override
 	public void close() throws IOException {
 		reader.close();

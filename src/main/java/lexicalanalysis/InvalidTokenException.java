@@ -20,4 +20,9 @@ public class InvalidTokenException extends Exception {
 		return position;
 	}
 	
+	@Override
+	public String getMessage() {
+		return String.format("Invalid token (%s) at position %d", token, position);
+	}
+	
 }

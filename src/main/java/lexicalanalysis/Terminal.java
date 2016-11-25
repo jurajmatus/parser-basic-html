@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 import com.google.common.base.CharMatcher;
 
-public interface Terminal extends GrammarUnit {
+public interface Terminal extends GrammaticalUnit {
 
 	public boolean test(String text);
 	
@@ -30,7 +30,7 @@ public interface Terminal extends GrammarUnit {
 		
 		@Override
 		public String toString() {
-			return text;
+			return String.format("\"%s\"", text);
 		}
 		
 	}
@@ -57,11 +57,11 @@ public interface Terminal extends GrammarUnit {
 		
 	}
 	
-	public static Terminal newLiteralToken(String text) {
+	public static Terminal newLiteralTerminal(String text) {
 		return new LiteralTerminal(text);
 	}
 	
-	public static Terminal newCharacterSetToken(CharMatcher charMatcher) {
+	public static Terminal newCharacterSetTerminal(CharMatcher charMatcher) {
 		return new PredicateCharTerminal(charMatcher::matches);
 	}
 	

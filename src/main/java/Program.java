@@ -3,7 +3,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import lexicalanalysis.InvalidTokenException;
 import lexicalanalysis.TokenStream;
+import parsing.ParseException;
+import parsing.ParseStep;
+import parsing.Parser;
 
 public class Program {
 
@@ -20,8 +24,18 @@ public class Program {
 			System.exit(1);
 		}
 		
-		try (TokenStream tokenStream = new TokenStream(Files.newBufferedReader(source))) {
-			
+		try (Parser parser = new Parser(new TokenStream(Files.newBufferedReader(source)))) {
+			ParseStep ps;
+			do {
+				try {
+					ps = parser.step();
+					System.out.println(ps.toString());
+				} catch (ParseException | InvalidTokenException e) {
+					System.err.println("Error in parsing:");
+					System.err.println("   " + e.getMessage());
+					break;
+				}
+			} while (!ps.isDone());
 		}
 		
 	}

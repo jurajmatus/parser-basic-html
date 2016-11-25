@@ -64,7 +64,7 @@ public class Token {
 	
 	@Override
 	public String toString() {
-		return text;
+		return String.format("\"%s\"", text);
 	}
 	
 }
