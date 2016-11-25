@@ -1,8 +1,9 @@
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import lexicalanalysis.TokenStream;
 
 public class Program {
 
@@ -19,7 +20,9 @@ public class Program {
 			System.exit(1);
 		}
 		
-		BufferedReader reader = Files.newBufferedReader(source);
+		try (TokenStream tokenStream = new TokenStream(Files.newBufferedReader(source))) {
+			
+		}
 		
 	}
 
