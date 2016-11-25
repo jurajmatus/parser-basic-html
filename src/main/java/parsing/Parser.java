@@ -28,6 +28,22 @@ public class Parser implements Closeable, AutoCloseable {
 	private final static Table<NonTerminal, Terminal, Rule> ruleTable = HashBasedTable.create(40, 20);
 	private final static List<Rule> ruleList = new ArrayList<>();
 	static {
+		
+		/*
+		 * Definition of non-epsilon rules:
+		 * Rule.define(nonterminalname, terminal1, nonterminal1, terminal2, ...)
+		 * 		.register(rulaTable, ruleList, first1, first2, ...);
+		 * 
+		 * Definition of epsilon rules:
+		 * Rule.define(nonterminalname)
+		 * 		.register(rulaTable, ruleList, follow1, follow2, ...);
+		 * 
+		 * example:
+		 * 	S -> A B c d ... FIRST(1) = {"f", "g"}
+		 * 	Rule.define("S", n("A"), n("B"), t("c"), t("d"))
+		 * 		.register(ruleTable, ruleList, t("f"), t("g"));
+		 */
+		
 		Rule.define("htmldocument", t("<html>"), n("documenthead"), n("documentbody"), t("</html>"))
 			.register(ruleTable, ruleList, t("<html>"));
 		Rule.define("documenthead", t("<head>"), n("headertags"), t("</head>"))
@@ -36,6 +52,14 @@ public class Parser implements Closeable, AutoCloseable {
 			.register(ruleTable, ruleList, t("<title>"), t("<meta>"));
 		Rule.define("headertags")
 			.register(ruleTable, ruleList, t("</head>"));
+		Rule.define("headertag", n("titletag"))
+			.register(ruleTable, ruleList, t("<title>"));
+		Rule.define("headertag", n("metatag"))
+			.register(ruleTable, ruleList, t("<meta>"));
+		Rule.define("titletag", t("<title>"), n("content"), t("</title>"))
+			.register(ruleTable, ruleList, t("<title>"));
+		Rule.define("metatag", t("<meta"), t("name="), n("word"), t("content="), n("word"), t(">"))
+			.register(ruleTable, ruleList, t("<meta"));
 	}
 
 	private final TokenStream tokenStream;
