@@ -18,10 +18,10 @@ public class TokenStream implements Closeable, AutoCloseable {
 	private final static List<Terminal> TERMINALS;
 	private final static int MAX_TOKEN_LENGTH;
 	
-	public final static Terminal WHITESPACE = Terminal.newCharacterSetTerminal(CharMatcher.whitespace());
-	public final static Terminal LETTER = Terminal.newCharacterSetTerminal(CharMatcher.javaLetter());
-	public final static Terminal DIGIT = Terminal.newCharacterSetTerminal(CharMatcher.digit());
-	public final static Terminal OTHERSYMBOL = Terminal.newCharacterSetTerminal(CharMatcher.anyOf(".,-!/_:'\"|;+-*"));
+	public final static Terminal WHITESPACE = Terminal.newCharacterSetTerminal("WS", CharMatcher.whitespace());
+	public final static Terminal LETTER = Terminal.newCharacterSetTerminal("[a-zA-Z]", CharMatcher.javaLetter());
+	public final static Terminal DIGIT = Terminal.newCharacterSetTerminal("[0-9]", CharMatcher.digit());
+	public final static Terminal OTHERSYMBOL = Terminal.newCharacterSetTerminal("[.,!- ...]", CharMatcher.anyOf(".,-!/_:'\"|;+-*"));
 	
 	static {
 		Builder<Terminal> builder = Stream.builder();

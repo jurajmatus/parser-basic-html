@@ -42,7 +42,11 @@ public class Rule {
 	
 	@Override
 	public String toString() {
-		return ruleOf.toString() + " -> " + expansion.stream().map(gu -> gu.toString()).collect(joining(" "));
+		String exp = expansion.stream().map(gu -> gu.toString()).collect(joining(" "));
+		if (exp.isEmpty()) {
+			exp = "Ɛ";
+		}
+		return ruleOf.toString() + " -> " + exp;
 	}
 	
 }

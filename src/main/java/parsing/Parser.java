@@ -42,6 +42,11 @@ public class Parser implements Closeable, AutoCloseable {
 		 * 	S -> A B c d ... FIRST(1) = {"f", "g"}
 		 * 	Rule.define("S", n("A"), n("B"), t("c"), t("d"))
 		 * 		.register(ruleTable, ruleList, t("f"), t("g"));
+		 * 
+		 * terminals letter, digit and othersymbol are defined as static fields (not t("letter"), ...):
+		 * TokenStream.LETTER
+		 * TokenStream.DIGIT
+		 * TokenStream.OTHERSYMBOL
 		 */
 		
 		Rule.define("htmldocument", t("<html>"), n("documenthead"), n("documentbody"), t("</html>"))
@@ -60,6 +65,22 @@ public class Parser implements Closeable, AutoCloseable {
 			.register(ruleTable, ruleList, t("<title>"));
 		Rule.define("metatag", t("<meta"), t("name="), n("word"), t("content="), n("word"), t(">"))
 			.register(ruleTable, ruleList, t("<meta"));
+		
+		// TODO - fill in remaining rules here
+		
+		Rule.define("content", n("word"))
+			.register(ruleTable, ruleList, TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL);
+		Rule.define("content")
+			.register(ruleTable, ruleList, t("content="), t("</title>"), t("<table>"), t("<ul>"), t("<ol>"),
+					t("<dl>"), t("<p>"), t("</body>"), t("</html>"), t("</p>"), t("</td>"));
+		Rule.define("word", n("char"), n("content"))
+			.register(ruleTable, ruleList, TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL);
+		Rule.define("char", TokenStream.LETTER)
+			.register(ruleTable, ruleList, TokenStream.LETTER);
+		Rule.define("char", TokenStream.DIGIT)
+			.register(ruleTable, ruleList, TokenStream.DIGIT);
+		Rule.define("char", TokenStream.OTHERSYMBOL)
+			.register(ruleTable, ruleList, TokenStream.OTHERSYMBOL);
 	}
 
 	private final TokenStream tokenStream;

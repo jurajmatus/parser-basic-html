@@ -38,8 +38,11 @@ public interface Terminal extends GrammaticalUnit {
 	public static class PredicateCharTerminal implements Terminal {
 		
 		private final Predicate<Character> predicate;
+		
+		private final String name;
 
-		public PredicateCharTerminal(Predicate<Character> predicate) {
+		public PredicateCharTerminal(String name, Predicate<Character> predicate) {
+			this.name = name;
 			this.predicate = predicate;
 		}
 
@@ -55,14 +58,19 @@ public interface Terminal extends GrammaticalUnit {
 			return 1;
 		}
 		
+		@Override
+		public String toString() {
+			return name;
+		}
+		
 	}
 	
 	public static Terminal newLiteralTerminal(String text) {
 		return new LiteralTerminal(text);
 	}
 	
-	public static Terminal newCharacterSetTerminal(CharMatcher charMatcher) {
-		return new PredicateCharTerminal(charMatcher::matches);
+	public static Terminal newCharacterSetTerminal(String name, CharMatcher charMatcher) {
+		return new PredicateCharTerminal(name, charMatcher::matches);
 	}
 	
 }
