@@ -65,12 +65,10 @@ public class Parser implements Closeable, AutoCloseable {
 			.register(ruleTable, ruleList, t("<title>"));
 		Rule.define("metatag", t("<meta"), t("name="), n("word"), t("content="), n("word"), t(">"))
 			.register(ruleTable, ruleList, t("<meta"));
-		
-		// TODO - fill in remaining rules here ******************************
 		Rule.define("documentbody", t("<body>"), n("bodytags"), t("</body>"))
 				.register(ruleTable, ruleList, t("<body>"));
 		Rule.define("bodytags", n("bodytag"), n("bodytags"))
-				.register(ruleTable, ruleList, t("<table>"),t("<ul>"),t("<ol>"),t("<dl>"),t("<p>"));
+				.register(ruleTable, ruleList, t("<table>"),t("<ul>"),t("<ol>"),t("<dl>"),t("<p>"),TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL);
 		Rule.define("bodytags")
 				.register(ruleTable, ruleList, t("</body>"),t("</html>"),t("</p>"),t("</td>"));
 		Rule.define("bodytag", n("table"))
@@ -129,12 +127,6 @@ public class Parser implements Closeable, AutoCloseable {
 				.register(ruleTable, ruleList,t("<dt>"));
 		Rule.define("defterm",t("<dd>"),n("bodytag"))
 				.register(ruleTable, ruleList,t("<dd>"));
-
-
-
-
-		//************************************
-		
 		Rule.define("content", n("word"))
 			.register(ruleTable, ruleList, TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL);
 		Rule.define("content")
