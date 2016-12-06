@@ -54,13 +54,13 @@ public class Parser implements Closeable, AutoCloseable {
 		Rule.define("documenthead", t("<head>"), n("headertags"), t("</head>"))
 			.register(ruleTable, ruleList, t("<head>"));
 		Rule.define("headertags", n("headertag"), n("headertags"))
-			.register(ruleTable, ruleList, t("<title>"), t("<meta>"));
+			.register(ruleTable, ruleList, t("<title>"), t("<meta"));
 		Rule.define("headertags")
 			.register(ruleTable, ruleList, t("</head>"));
 		Rule.define("headertag", n("titletag"))
 			.register(ruleTable, ruleList, t("<title>"));
 		Rule.define("headertag", n("metatag"))
-			.register(ruleTable, ruleList, t("<meta>"));
+			.register(ruleTable, ruleList, t("<meta"));
 		Rule.define("titletag", t("<title>"), n("content"), t("</title>"))
 			.register(ruleTable, ruleList, t("<title>"));
 		Rule.define("metatag", t("<meta"), t("name="), n("word"), t("content="), n("word"), t(">"))
@@ -68,7 +68,8 @@ public class Parser implements Closeable, AutoCloseable {
 		Rule.define("documentbody", t("<body>"), n("bodytags"), t("</body>"))
 				.register(ruleTable, ruleList, t("<body>"));
 		Rule.define("bodytags", n("bodytag"), n("bodytags"))
-				.register(ruleTable, ruleList, t("<table>"),t("<ul>"),t("<ol>"),t("<dl>"),t("<p>"),TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL);
+				.register(ruleTable, ruleList, t("<table>"),t("<ul>"),t("<ol>"),t("<dl>"),t("<p>"),
+						TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL);
 		Rule.define("bodytags")
 				.register(ruleTable, ruleList, t("</body>"),t("</html>"),t("</p>"),t("</td>"));
 		Rule.define("bodytag", n("table"))
@@ -78,7 +79,9 @@ public class Parser implements Closeable, AutoCloseable {
 		Rule.define("bodytag", n("paragraph"))
 				.register(ruleTable, ruleList, t("<p>"));
 		Rule.define("bodytag", n("content"))
-				.register(ruleTable, ruleList,TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL,t("<table>"),t("<ul>"),t("<ol>"),t("<dl>"),t("<p>"),t("</body>"),t("</html>"),t("</p>"),t("</td>"));
+				.register(ruleTable, ruleList,TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL,
+						t("<table>"),t("<ul>"),t("<ol>"),t("<dl>"),t("<p>"),t("</body>"),t("</html>"),t("</p>"),t("</td>"),
+						t("<dt>"), t("<dd>"), t("<li>"), t("</ul>"), t("</ol>"));
 		Rule.define("paragraph", t("<p>"),n("bodytags"),n("paragraphend"))
 				.register(ruleTable, ruleList,t("<p>"));
 		Rule.define("paragraphend", t("</p>"))
@@ -114,7 +117,7 @@ public class Parser implements Closeable, AutoCloseable {
 		Rule.define("ordered",t("<ol>"),n("listitems"),t("</ol>"))
 				.register(ruleTable, ruleList, t("<ol>"));
 		Rule.define("listitems",t("<li>"),n("bodytag"),n("listitems"))
-				.register(ruleTable, ruleList, t("<ol>"));
+				.register(ruleTable, ruleList, t("<li>"));
 		Rule.define("listitems")
 				.register(ruleTable, ruleList, t("</ul>"),t("</ol>"));
 		Rule.define("definitionlist",t("<dl>"),n("defterms"),t("</dl>"))
@@ -131,7 +134,8 @@ public class Parser implements Closeable, AutoCloseable {
 			.register(ruleTable, ruleList, TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL);
 		Rule.define("content")
 			.register(ruleTable, ruleList, t("content="), t("</title>"), t("<table>"), t("<ul>"), t("<ol>"),
-					t("<dl>"), t("<p>"), t("</body>"), t("</html>"), t("</p>"), t("</td>"));
+					t("<dl>"), t("<p>"), t("</body>"), t("</html>"), t("</p>"), t("</td>"), t(">"), t("<dt>"),
+					t("<dd>"), t("<li>"), t("</ul>"), t("</ol>"));
 		Rule.define("word", n("char"), n("content"))
 			.register(ruleTable, ruleList, TokenStream.LETTER, TokenStream.DIGIT, TokenStream.OTHERSYMBOL);
 		Rule.define("char", TokenStream.LETTER)
