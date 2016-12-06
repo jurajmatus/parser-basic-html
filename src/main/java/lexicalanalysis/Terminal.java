@@ -5,6 +5,34 @@ import java.util.function.Predicate;
 import com.google.common.base.CharMatcher;
 
 public interface Terminal extends GrammaticalUnit {
+	
+	public static final Terminal EPSILON = new Terminal() {
+		@Override
+		public boolean test(String text) {
+			return false;
+		}
+		@Override
+		public int getLength() {
+			return -1;
+		}
+		public String toString() {
+			return "Ɛ";
+		};
+	};
+	
+	public static final Terminal DOLLAR = new Terminal() {
+		@Override
+		public boolean test(String text) {
+			return false;
+		}
+		@Override
+		public int getLength() {
+			return -1;
+		}
+		public String toString() {
+			return "$";
+		};
+	};
 
 	public boolean test(String text);
 	

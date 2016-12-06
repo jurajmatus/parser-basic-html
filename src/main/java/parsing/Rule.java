@@ -44,9 +44,19 @@ public class Rule {
 	public String toString() {
 		String exp = expansion.stream().map(gu -> gu.toString()).collect(joining(" "));
 		if (exp.isEmpty()) {
-			exp = "Ɛ";
+			exp = Terminal.EPSILON.toString();
 		}
 		return ruleOf.toString() + " -> " + exp;
+	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return this == obj;
 	}
 	
 }

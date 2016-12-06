@@ -22,4 +22,9 @@ public class TestProgram {
 		Program.main(new String[] {"src/test/resources/test4.html"});
 	}
 	
+	@Test
+	public void findFirstFollow() throws Exception {
+		Program.main(new String[] {"--find-first-follow"});
+	}
+	
 }
