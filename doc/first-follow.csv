@@ -1,0 +1,46 @@
+RULE;FIRST;FOLLOW
+1. htmldocument -> "<html>" documenthead documentbody "</html>";{"<html>"};{$}
+2. documenthead -> "<head>" headertags "</head>";{"<head>"};{"<body>"}
+3. headertags -> headertag headertags;{"<title>", "<meta"};{"</head>"}
+4. headertags -> Ɛ;{Ɛ};-
+5. headertag -> titletag;{"<title>"};{"<title>", "</head>", "<meta"}
+6. headertag -> metatag;{"<meta"};-
+7. titletag -> "<title>" content "</title>";{"<title>"};{"<title>", "</head>", "<meta"}
+8. metatag -> "<meta" "name=" word "content=" word ">";{"<meta"};{"<title>", "</head>", "<meta"}
+9. documentbody -> "<body>" bodytags "</body>";{"<body>"};{"</html>"}
+10. bodytags -> bodytag bodytags;{"<table>", "<ol>", "<dl>", "<ul>", "<p>", othersymbol, digit, letter};{"</body>", "<table>", "</td>", "</tr>", "</dl>", "</ol>", "</ul>", "</p>", "<ol>", "<li>", "<dl>", "<ul>", "<td>", "<dd>", "<dt>", "<p>", othersymbol, digit, letter}
+11. bodytags -> Ɛ;{Ɛ};-
+12. bodytag -> table;{"<table>"};{"<table>", "</body>", "</td>", "</tr>", "</ul>", "</ol>", "</dl>", "<ol>", "<dl>", "<ul>", "<li>", "<td>", "</p>", "<dd>", "<dt>", "<p>", othersymbol, digit, letter}
+13. bodytag -> list;{"<ol>", "<dl>", "<ul>"};-
+14. bodytag -> paragraph;{"<p>"};-
+15. bodytag -> content;{othersymbol, digit, letter, Ɛ};-
+16. paragraph -> "<p>" bodytags paragraphend;{"<p>"};{"<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter}
+17. paragraphend -> "</p>";{"</p>"};{"<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter}
+18. paragraphend -> Ɛ;{Ɛ};-
+19. table -> "<table>" tablerows "</table>";{"<table>"};{"<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter}
+20. tablerows -> tablerow tablerows;{"<tr>"};{"</table>"}
+21. tablerows -> Ɛ;{Ɛ};-
+22. tablerow -> "<tr>" tablecells "</tr>";{"<tr>"};{"</table>", "<tr>"}
+23. tablecells -> tablecell tablecells;{"<td>"};{"</tr>"}
+24. tablecells -> Ɛ;{Ɛ};-
+25. tablecell -> "<td>" bodytags tablecellend;{"<td>"};{"</tr>", "<td>"}
+26. tablecellend -> "</td>";{"</td>"};{"</tr>", "<td>"}
+27. tablecellend -> Ɛ;{Ɛ};-
+28. list -> unordered;{"<ul>"};{"<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter}
+29. list -> ordered;{"<ol>"};-
+30. list -> definitionlist;{"<dl>"};-
+31. unordered -> "<ul>" listitems "</ul>";{"<ul>"};{"<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter}
+32. ordered -> "<ol>" listitems "</ol>";{"<ol>"};{"<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter}
+33. listitems -> "<li>" bodytag listitems;{"<li>"};{"</ul>", "</ol>"}
+34. listitems -> Ɛ;{Ɛ};-
+35. definitionlist -> "<dl>" defterms "</dl>";{"<dl>"};{"<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter}
+36. defterms -> defterm defterms;{"<dd>", "<dt>"};{"</dl>"}
+37. defterms -> Ɛ;{Ɛ};-
+38. defterm -> "<dt>" bodytag;{"<dt>"};{"</dl>", "<dd>", "<dt>"}
+39. defterm -> "<dd>" bodytag;{"<dd>"};-
+40. content -> word;{othersymbol, digit, letter};{"</title>", "content=", "<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter, ">"}
+41. content -> Ɛ;{Ɛ};-
+42. word -> char content;{othersymbol, digit, letter};{"content=", "</title>", "<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", ">", othersymbol, digit, letter}
+43. char -> letter;{letter};{"content=", "</title>", "<table>", "</body>", "</td>", "</dl>", "</tr>", "</ol>", "</ul>", "<ol>", "<li>", "<dl>", "<ul>", "<dd>", "<dt>", "<td>", "</p>", "<p>", othersymbol, digit, letter, ">"}
+44. char -> digit;{digit};-
+45. char -> othersymbol;{othersymbol};-

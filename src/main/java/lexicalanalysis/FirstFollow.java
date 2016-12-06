@@ -28,6 +28,7 @@ public class FirstFollow {
 	private final Map<NonTerminal, Set<Terminal>> firstForNT = new HashMap<>();
 	
 	private final Map<NonTerminal, Set<Terminal>> follow = new HashMap<>();
+	private final Map<NonTerminal, Set<NonTerminal>> followToExpand = new HashMap<>();
 	
 	private final List<Rule> ruleList;
 
@@ -40,6 +41,7 @@ public class FirstFollow {
 		
 		addToFollow(ruleList.get(0).getRuleOf(), Terminal.DOLLAR);
 		ruleList.forEach(this::findFollow);
+		expandFollow();
 	}
 	
 	private Set<Terminal> getFirstForNonTerminal(NonTerminal nt) {
@@ -126,9 +128,13 @@ public class FirstFollow {
 		}
 		
 		current.forEach(nt -> {
-			addToFollow(nt, follow.getOrDefault(rule.getRuleOf(), Collections.emptySet()));
+			addToFollow(nt, rule.getRuleOf());
 		});
 		
+	}
+
+	private void addToFollow(NonTerminal nt, NonTerminal toExpand) {
+		followToExpand.merge(nt, Stream.of(toExpand).collect(toSet()), Sets::union);
 	}
 
 	private void addToFollow(NonTerminal nt, Terminal term) {
@@ -137,6 +143,30 @@ public class FirstFollow {
 	
 	private void addToFollow(NonTerminal nt, Collection<Terminal> terms) {
 		follow.merge(nt, terms.stream().filter(t -> t != Terminal.EPSILON).collect(toSet()), Sets::union);
+	}
+	
+	private void expandFollow() {
+		int i = 0;
+		boolean appliedExpand = true;
+		while (appliedExpand && (i++) < ruleList.size()) {
+			appliedExpand = false;
+			for (NonTerminal nt : followToExpand.keySet()) {
+				Set<NonTerminal> ntsToExpand = followToExpand.get(nt);
+				Set<NonTerminal> toRemove = new HashSet<>();
+				for (NonTerminal link : ntsToExpand) {
+					if (link != nt) {
+						appliedExpand = true;
+						Set<Terminal> expandedLink = follow.getOrDefault(link, Collections.emptySet());
+						addToFollow(nt, expandedLink);
+					}
+					if (link == nt || followToExpand.getOrDefault(link, Collections.emptySet())
+							.stream().filter(_nt -> _nt != nt).count() == 0) {
+						toRemove.add(link);
+					}
+				}
+				followToExpand.put(nt, Sets.difference(ntsToExpand, toRemove));
+			}
+		}
 	}
 	
 	public String first() {
@@ -179,7 +209,7 @@ public class FirstFollow {
 			
 			String follow;
 			if (!handled.contains(rule.getRuleOf())) {
-				follow = "{" + this.follow.get(rule.getRuleOf()).stream()
+				follow = "{" + this.follow.getOrDefault(rule.getRuleOf(), Collections.emptySet()).stream()
 							.sorted((t1, t2) -> Integer.compare(t2.getLength(), t1.getLength()))
 							.map(t -> t.toString()).collect(joining(", ")) + "}";
 				handled.add(rule.getRuleOf());
@@ -195,7 +225,8 @@ public class FirstFollow {
 	public Set<Terminal> getTerminalsForRuleApplication(Rule rule) {
 		Set<Terminal> ret = new HashSet<>(getFirstForRule(rule));
 		if (ret.contains(Terminal.EPSILON)) {
-			ret.addAll(follow.getOrDefault(rule, Collections.emptySet()));
+			ret.addAll(follow.getOrDefault(rule.getRuleOf(), Collections.emptySet()));
+			ret.remove(Terminal.EPSILON);
 		}
 		return ret;
 	}
@@ -205,7 +236,7 @@ public class FirstFollow {
 		for (Rule rule : ruleList) {
 			for (Terminal term : getTerminalsForRuleApplication(rule)) {
 				Rule old = ruleTable.get(rule.getRuleOf(), term);
-				if (old != null && rule.getExpansion().size() > old.getExpansion().size()) {
+				if (old == null || rule.getExpansion().size() > old.getExpansion().size()) {
 					ruleTable.put(rule.getRuleOf(), term, rule);
 				}
 			}

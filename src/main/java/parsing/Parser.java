@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
 import lexicalanalysis.FirstFollow;
@@ -27,17 +26,16 @@ public class Parser implements Closeable, AutoCloseable {
 	}
 	
 	public static FirstFollow getFirstFollow() {
-		if (firstFollow == null) {
-			firstFollow = new FirstFollow(ruleList);
-		}
 		return firstFollow;
 	}
 	
-	private final static Table<NonTerminal, Terminal, Rule> ruleTable = HashBasedTable.create(40, 20);
+	private final static Table<NonTerminal, Terminal, Rule> ruleTable;
 	private final static List<Rule> ruleList = new ArrayList<>();
 	private static FirstFollow firstFollow;
 	static {
 		
+		/*
+		ruleTable = HashBasedTable.create(40, 20)
 		Rule.define("htmldocument", t("<html>"), n("documenthead"), n("documentbody"), t("</html>"))
 			.register(ruleTable, ruleList, t("<html>"));
 		Rule.define("documenthead", t("<head>"), n("headertags"), t("</head>"))
@@ -132,9 +130,9 @@ public class Parser implements Closeable, AutoCloseable {
 		Rule.define("char", TokenStream.DIGIT)
 			.register(ruleTable, ruleList, TokenStream.DIGIT);
 		Rule.define("char", TokenStream.OTHERSYMBOL)
-			.register(ruleTable, ruleList, TokenStream.OTHERSYMBOL);
+			.register(ruleTable, ruleList, TokenStream.OTHERSYMBOL);*/
 		
-		/*ruleList.add(Rule.define("htmldocument", t("<html>"), n("documenthead"), n("documentbody"), t("</html>")));
+		ruleList.add(Rule.define("htmldocument", t("<html>"), n("documenthead"), n("documentbody"), t("</html>")));
 		ruleList.add(Rule.define("documenthead", t("<head>"), n("headertags"), t("</head>")));
 		ruleList.add(Rule.define("headertags", n("headertag"), n("headertags")));
 		ruleList.add(Rule.define("headertags"));
@@ -181,7 +179,7 @@ public class Parser implements Closeable, AutoCloseable {
 		ruleList.add(Rule.define("char", TokenStream.OTHERSYMBOL));
 		
 		firstFollow = new FirstFollow(ruleList);
-		ruleTable = firstFollow.createRuleTable();*/
+		ruleTable = firstFollow.createRuleTable();
 		
 	}
 
