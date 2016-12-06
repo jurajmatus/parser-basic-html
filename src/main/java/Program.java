@@ -34,17 +34,17 @@ public class Program {
 			}
 			
 			try (Parser parser = new Parser(new TokenStream(Files.newBufferedReader(source)))) {
-				ParseStep ps;
+				ParseStep ps = null;
 				do {
 					try {
 						ps = parser.step();
 						System.out.println(ps.toString());
 					} catch (ParseException | InvalidTokenException e) {
+						ps = null;
 						System.err.println("Error in parsing:");
 						System.err.println("   " + e.getMessage());
-						break;
 					}
-				} while (!ps.isDone());
+				} while (ps == null || !ps.isDone());
 			}
 		
 		}
